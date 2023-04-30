@@ -21,7 +21,7 @@ def dress_list(request):
     #serialize them
     #return json
     if request.method == 'GET':
-        dresses = Dress.objects.all()
+        dresses = Dress.objects.all()[:100]
         serializer = DressSerializer(dresses, many=True)
         return Response({"dresses": serializer.data})
 
@@ -66,7 +66,7 @@ def brand_list(request):
     #serialize them
     #return json
     if request.method == 'GET':
-        brands = Brand.objects.all()
+        brands = Brand.objects.all()[:100]
         serializer = BrandSerializer(brands, many=True)
         return Response({"brands": serializer.data})
 
@@ -109,7 +109,7 @@ def filter_brands(request, nr_models):
 
     if request.method=='GET':
         brands_list=[]
-        brands = Brand.objects.all()
+        brands = Brand.objects.all()[:100]
         for brand in brands:
             my_model_instance = Brand.objects.get(id=brand.id)
             my_field_value = my_model_instance.nr_models
@@ -135,7 +135,7 @@ def nouu(request, id):
 def redcarpetpres_list(request):
 
     if request.method == 'GET':
-        shows = RedCarpetPresentation.objects.all()
+        shows = RedCarpetPresentation.objects.all()[:100]
         serializer = RedCarpetSerializer(shows, many=True)
         return Response({"red carpet prezenations": serializer.data})
 
@@ -174,7 +174,7 @@ def redcarpetpres_detail(request, id):
 def show_event_list(request):
 
     if request.method == 'GET':
-        shows = ShowEvent.objects.all()
+        shows = ShowEvent.objects.all()[:100]
         serializer = ShowSerializerList(shows, many=True)
         return Response({"shows": serializer.data})
 

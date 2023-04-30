@@ -35,7 +35,7 @@ urlpatterns = [
     path('brands/filter/<int:nr_models>', views.filter_brands),
     path('pres/report/', views.show_average_pieces),
     path('dress/report/models/', views.ReportModels.as_view()),
-    path('brands-ordered-by-nr-models', views.FilterModels.as_view()),
+    path('brands/brands-ordered-by-nr-models', views.FilterModels.as_view(), name='brands-ordered-by-nr-models'),
     path('pres/report/guests/', views.ReportGuests.as_view()),
     path('dress/<int:pk>/presentation/', views.PresentationForDress.as_view()),
     path('presentation/<int:pk>/dress/', views.DressForPresentation.as_view()),

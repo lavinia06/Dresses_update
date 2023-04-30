@@ -47,7 +47,7 @@ class RedCarpetSerializer(serializers.ModelSerializer):
 
 
 class BrandSerializer2(serializers.ModelSerializer):
-    dresses = DressSerializer(read_only=True, many = True)
+    dresses = DressSerializer(read_only=True, many=True)
 
     class Meta:
         model = Brand
