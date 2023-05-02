@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 #from rest_framework.exceptions import ValidationError
-
+from dataclasses import dataclass
 import uuid
 
 class Brand(models.Model):
@@ -48,3 +48,10 @@ class ShowEvent(models.Model):
     presentation = models.ForeignKey(RedCarpetPresentation, on_delete=models.CASCADE)
 
 
+@dataclass
+class ShowEventDto:
+    pieces: int
+    show_date: str
+    show_popularity: int
+    dress_name: str
+    presentation_name: str

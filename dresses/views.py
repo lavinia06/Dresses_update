@@ -3,7 +3,7 @@ from django.forms import model_to_dict
 from django.http import JsonResponse, Http404
 from rest_framework.views import APIView
 
-from .models import Dress
+from .models import Dress, ShowEventDto
 from .models import ShowEvent
 from .serializers import DressSerializer, RedCarpetSerializer, ShowSerializerList, BrandSerializer2, DressSerializer2, \
     ShowEventSerializerDetail, BrandDressSerializer
@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from .models import Brand
 from .models import RedCarpetPresentation
+from dataclasses import asdict
 
 @api_view(['GET', 'POST'])
 def dress_list(request):
@@ -119,6 +120,38 @@ def filter_brands(request, nr_models):
         return Response(serializer.data)
 
 
+
+@api_view(['GET'])
+def filter_dresses(request, price):
+
+    if request.method=='GET':
+        dresses_list=[]
+        dresses = Dress.objects.all()[:100]
+        for dress in dresses:
+            my_model_instance = Dress.objects.get(id=dress.id)
+            my_field_value = my_model_instance.price
+            if my_field_value > price:
+               dresses_list.append(dress)
+        serializer = DressSerializer(dresses_list, many=True)
+        return Response(serializer.data)
+
+
+
+@api_view(['GET'])
+def filter_shows(request, nr_guests):
+
+    if request.method=='GET':
+        shows_list=[]
+        shows = RedCarpetPresentation.objects.all()[:100]
+        for show in shows:
+            my_model_instance = RedCarpetPresentation.objects.get(id=show.id)
+            my_field_value = my_model_instance.nr_guests
+            if my_field_value > nr_guests:
+               shows_list.append(show)
+        serializer = RedCarpetSerializer(shows_list, many=True)
+        return Response(serializer.data)
+
+
 @api_view(['GET'])
 def nouu(request, id):
     try:
@@ -194,8 +227,15 @@ def show_event_detail(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = ShowSerializerList(show)
-        return Response(serializer.data)
+        show_serializer_dto = ShowEventDto(
+            pieces=show.pieces,
+            show_date=show.show_date,
+            show_popularity=show.show_popularity,
+            dress_name=show.dress.name,
+            presentation_name=show.presentation.event_name
+        )
+        # serializer = ShowSerializerList(show)
+        return Response(asdict(show_serializer_dto))
     elif request.method == 'PUT':
         serializer = ShowSerializerList(show, data=request.data)
         if serializer.is_valid():
@@ -221,6 +261,14 @@ class FilterModels(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Brand.objects.annotate(min_models=Min('nr_models')).order_by('min_models')
+        return queryset
+
+
+class FilterDresses(generics.ListCreateAPIView):
+    serializer_class = DressSerializer
+
+    def get_queryset(self):
+        queryset = Dress.objects.annotate(min_price=Min('price')).order_by('min_price')
         return queryset
 
 
